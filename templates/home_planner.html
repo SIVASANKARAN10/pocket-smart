@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="en"><head><title>Home Interior Budget Planner - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body class="page-home">
+{% set active='home' %}{% include "partials/app_nav.html" %}
+<div class="page-head"><h1>Home Interior Budget Planner</h1><p>Create a customized budget plan for your dream home interior</p></div>
+<div class="form-wrap"><form class="form-card" id="f">
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-indian-rupee-sign"></i></span> Budget Details</h3><div class="line"></div>
+    <label class="lb" for="budget">Total Budget (₹)</label><input id="budget" type="number" min="1" step="any" value="50000" required></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-lightbulb"></i></span> Fixtures &amp; Furniture</h3><div class="line"></div>
+    <div class="two"><div><label class="lb" for="lights"><i class="fa-solid fa-lightbulb"></i> Number of Lights/Fixtures</label><input id="lights" type="number" min="0" max="200" value="5"></div>
+    <div><label class="lb" for="fans"><i class="fa-solid fa-fan"></i> Number of Ceiling Fans</label><input id="fans" type="number" min="0" max="100" value="4"></div></div>
+    <div class="two"><div><label class="lb" for="furn"><i class="fa-solid fa-couch"></i> Number of Furniture Pieces</label><input id="furn" type="number" min="0" max="200" value="2"></div>
+    <div><label class="lb" for="dt"><i class="fa-solid fa-utensils"></i> Number of Dining Tables</label><input id="dt" type="number" min="0" max="50" value="1"></div></div></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-door-open"></i></span> Rooms to Include</h3><div class="line"></div>
+    <div class="checks"><label><input type="checkbox" id="living" checked><i class="fa-solid fa-tv"></i> Living Room</label><label><input type="checkbox" id="kitchen" checked><i class="fa-solid fa-kitchen-set"></i> Kitchen</label><label><input type="checkbox" id="bedroom"><i class="fa-solid fa-bed"></i> Bedroom</label></div></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-clipboard"></i></span> Additional Information</h3><div class="line"></div>
+    <label class="lb" for="extra">Special Requirements or Preferences</label><textarea id="extra" rows="3" placeholder="Any specific requirements or preferences..."></textarea></div>
+  <div class="submit-row"><button class="btn btn-primary" id="b" type="submit"><i class="fa-solid fa-calculator"></i> Generate Recommendations</button></div>
+</form></div>
+<div class="spinner" id="sp"><i class="fa-solid fa-spinner fa-spin"></i> Building your plan...</div>
+<div class="result" id="out"></div>
+<div class="footer-slim footer">&copy; 2025 PocketSmart. All rights reserved.</div>
+<script>
+document.getElementById("f").addEventListener("submit",ev=>{
+  ev.preventDefault();
+  PS.submit({url:"/home-budget",btn:b,spinner:sp,out:document.getElementById("out"),type:"home",body:{
+    total_budget:parseFloat(budget.value),num_lights:+lights.value||0,num_fans:+fans.value||0,num_furniture:+furn.value||0,num_dining_tables:+dt.value||0,
+    has_living_room:living.checked,has_kitchen:kitchen.checked,has_bedroom:bedroom.checked,additional_requirements:extra.value.trim()||null}});
+});
+</script></body></html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en"><head><title>Create Account - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body><div class="auth-wrap">
+  <div class="auth-brand"><h1>PocketSmart</h1><p>AI-Powered Budget Planning</p></div>
+  <div class="auth-card">
+    <h2>Create Your Account</h2>
+    <div id="msg" class="alert alert-error" role="alert"></div>
+    <form id="f">
+      <div class="field"><label for="u">Username</label><div class="input-ic"><i class="fa-solid fa-user"></i><input id="u" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_.\-]+" autocomplete="username" placeholder="Choose a username"></div></div>
+      <div class="field"><label for="e">Email</label><div class="input-ic"><i class="fa-solid fa-envelope"></i><input id="e" type="email" required autocomplete="email" placeholder="Enter your email"></div></div>
+      <div class="field"><label for="p">Password</label><div class="input-ic"><i class="fa-solid fa-lock"></i><input id="p" type="password" required minlength="6" maxlength="72" autocomplete="new-password" placeholder="Create a strong password"></div><div class="strength"><i id="s"></i></div></div>
+      <div class="field"><label for="c">Confirm Password</label><div class="input-ic"><i class="fa-solid fa-circle-check"></i><input id="c" type="password" required autocomplete="new-password" placeholder="Confirm your password"></div></div>
+      <button class="btn btn-primary" id="b" type="submit">Create Account <i class="fa-solid fa-user-plus"></i></button>
+    </form>
+    <div class="auth-alt">Already have an account? <a href="/login">Sign In</a></div>
+  </div></div>
+<script>
+const s=document.getElementById("s");
+p.addEventListener("input",()=>{const v=p.value;let n=0;if(v.length>=6)n++;if(v.length>=10)n++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))n++;if(/\d/.test(v)&&/[^A-Za-z0-9]/.test(v))n++;
+  s.style.width=n*25+"%";s.style.background=["#d64545","#d64545","#f7931e","#9bc53d","#22a35a"][n]});
+document.getElementById("f").addEventListener("submit",async ev=>{
+  ev.preventDefault(); const m=document.getElementById("msg"),b=document.getElementById("b"); m.classList.remove("show","alert-ok");m.classList.add("alert-error");
+  if(p.value!==c.value){m.textContent="Passwords do not match.";m.classList.add("show");return}
+  b.disabled=true;
+  try{
+    const r=await fetch("/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:u.value.trim(),email:e.value.trim(),password:p.value})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok){const x=d.detail;throw new Error(Array.isArray(x)?x.map(i=>i.loc.slice(-1)[0]+": "+i.msg).join("; "):x||"Registration failed")}
+    const fd=new URLSearchParams({username:u.value.trim(),password:p.value});
+    const l=await fetch("/token",{method:"POST",body:fd,credentials:"same-origin"});
+    location.href=l.ok?"/dashboard":"/login";
+  }catch(err){m.textContent=err.message;m.classList.add("show");b.disabled=false}
+});
+</script></body></html>

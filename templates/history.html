@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en"><head><title>Recommendation History - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body class="page-history">
+{% set active='history' %}{% include "partials/app_nav.html" %}
+<div class="hist-hero"><h1>Your Recommendation History</h1><p>View and manage all your previous budget plans and recommendations</p></div>
+<div class="hist-wrap"><h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Recommendations</h2><div class="h-grid" id="grid"><div class="empty">Loading...</div></div></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="modal-box"><button class="modal-close" id="mc" aria-label="Close"><i class="fa-solid fa-xmark"></i></button><div class="result" id="mbody"></div></div></div>
+<div class="footer-slim footer">&copy; 2025 PocketSmart. All rights reserved.</div>
+<script>
+const ICON={home:"fa-house",party:"fa-champagne-glasses",jewelry:"fa-gem"},TITLE={home:"Home Interior Budget",party:"Party Planning Budget",jewelry:"Jewelry Budget"};
+function card(i){
+  const dt=new Date(i.timestamp).toLocaleString("en-IN",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"});
+  let info="";
+  if(i.type==="home")info=`<div>Rooms: ${PS.esc((i.input.rooms||[]).join(", ")||"-")}</div><div>Lights: ${i.input.num_lights} &nbsp; Fans: ${i.input.num_fans} &nbsp; Furniture: ${i.input.num_furniture}</div>`;
+  if(i.type==="party")info=`<div>Party Type: ${PS.esc(i.input.party_type)}</div><div>Guests: ${i.input.num_guests}</div><div>Needs: ${PS.esc((i.input.needs||[]).join(", ")||"-")}</div>`;
+  if(i.type==="jewelry")info=`<div>Occasion: ${PS.esc(i.input.occasion)}</div><div>With outfit image: ${i.input.has_image?"Yes":"No"}</div>`;
+  const tags=(i.summary.categories||[]).map(c=>`<span class="tag">${PS.esc(c)}</span>`).join("");
+  return `<div class="h-card ${i.type}"><div class="hd"><span><i class="fa-solid ${ICON[i.type]}"></i> ${TITLE[i.type]}</span><small>${dt}</small></div>
+  <div class="bd"><div class="h-two"><div><small>Total Budget</small><b>${PS.inr(i.summary.total_budget)}</b></div><div><small>Remaining</small><b class="rem">${PS.inr(i.summary.remaining_budget)}</b></div></div>${info}<div class="tags">${tags}</div>
+  <button class="btn" data-id="${i.id}" data-type="${i.type}"><i class="fa-solid fa-eye"></i> View Full Details</button></div></div>`;
+}
+(async()=>{
+  const g=document.getElementById("grid");
+  try{
+    const d=await (await fetch("/recommendation-history",{credentials:"same-origin"})).json();
+    g.innerHTML=(d.history||[]).length?d.history.map(card).join(""):'<div class="empty" style="grid-column:1/-1">No recommendations yet. Create a plan from the dashboard.</div>';
+  }catch(e){g.innerHTML='<div class="empty">Could not load history.</div>'}
+})();
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button[data-id]");if(!b)return;
+  const r=await fetch("/recommendation-details/"+b.dataset.id,{credentials:"same-origin"});const d=await r.json();
+  if(!r.ok){alert(d.detail||"Could not load details");return}
+  mbody.innerHTML=PS.render(d.type,d.full_result);modal.classList.add("show");
+});
+mc.onclick=()=>modal.classList.remove("show");
+modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("show")});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")modal.classList.remove("show")});
+</script></body></html>

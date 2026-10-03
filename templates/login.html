@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="en"><head><title>Sign In - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body><div class="auth-wrap">
+  <div class="auth-brand"><h1>PocketSmart</h1><p>AI-Powered Budget Planning</p></div>
+  <div class="auth-card">
+    <h2>Welcome Back</h2>
+    <div id="msg" class="alert alert-error" role="alert"></div>
+    <form id="f">
+      <div class="field"><label for="u">Username</label><div class="input-ic"><i class="fa-solid fa-user"></i><input id="u" required autocomplete="username" placeholder="Enter your username"></div></div>
+      <div class="field"><label for="p">Password</label><div class="input-ic"><i class="fa-solid fa-lock"></i><input id="p" type="password" required autocomplete="current-password" placeholder="Enter your password"></div></div>
+      <div class="forgot"><a href="#" onclick="alert('Password reset is not enabled in this demo.');return false">Forgot Password?</a></div>
+      <button class="btn btn-primary" id="b" type="submit">Sign In <i class="fa-solid fa-arrow-right"></i></button>
+    </form>
+    <div class="auth-alt">Don't have an account? <a href="/register">Create Account</a></div>
+  </div></div>
+<script>
+document.getElementById("f").addEventListener("submit",async e=>{
+  e.preventDefault(); const m=document.getElementById("msg"),b=document.getElementById("b"); m.classList.remove("show"); b.disabled=true;
+  try{
+    const fd=new URLSearchParams({username:u.value.trim(),password:p.value});
+    const r=await fetch("/token",{method:"POST",body:fd,credentials:"same-origin"});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.detail||"Login failed");
+    location.href="/dashboard";
+  }catch(err){m.textContent=err.message;m.classList.add("show");b.disabled=false}
+});
+</script></body></html>

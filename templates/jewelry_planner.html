@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"><head><title>Jewelry Budget Planner - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body class="page-jewelry">
+{% set active='jewelry' %}{% include "partials/app_nav.html" %}
+<div class="page-head"><h1>Jewelry Budget Planner</h1><p>Get AI-powered jewelry recommendations within your budget for any occasion</p></div>
+<div class="form-wrap"><form class="form-card" id="f">
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-indian-rupee-sign"></i></span> Budget Details</h3><div class="line"></div>
+    <label class="lb" for="budget">Total Budget (₹)</label><input id="budget" type="number" min="1" step="any" value="5000" required></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-champagne-glasses"></i></span> Occasion &amp; Preferences</h3><div class="line"></div>
+    <label class="lb" for="occ"><i class="fa-solid fa-champagne-glasses"></i> Occasion</label><input id="occ" value="Birthday" required maxlength="80">
+    <label class="lb" for="pref"><i class="fa-solid fa-heart"></i> Style Preferences</label><textarea id="pref" rows="3" placeholder="Describe your style preferences, materials, colors, etc."></textarea></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-shirt"></i></span> Upload Outfit Image</h3><div class="line"></div>
+    <label class="drop" id="drop" for="img"><i class="fa-solid fa-cloud-arrow-up"></i>Click to upload an image of your outfit (optional)</label>
+    <input type="file" id="img" accept="image/*" hidden>
+    <div class="preview" id="prev"><img id="pimg" alt="Outfit preview"><button type="button" class="rm" id="rm"><i class="fa-solid fa-trash"></i> Remove Image</button></div></div>
+  <div class="submit-row"><button class="btn btn-primary" id="b" type="submit"><i class="fa-solid fa-pen"></i> Get Recommendations</button></div>
+</form></div>
+<div class="spinner" id="sp"><i class="fa-solid fa-spinner fa-spin"></i> Finding matching jewelry...</div>
+<div class="result" id="out"></div>
+<div class="footer-slim footer">&copy; 2025 PocketSmart | Smart Budget Solutions</div>
+<script>
+img.addEventListener("change",()=>{const f=img.files[0];if(!f)return;
+  if(f.size>8*1024*1024){alert("Image is too large (max 8 MB).");img.value="";return}
+  pimg.src=URL.createObjectURL(f);prev.style.display="block";drop.style.display="none"});
+rm.addEventListener("click",()=>{img.value="";prev.style.display="none";drop.style.display="block"});
+document.getElementById("f").addEventListener("submit",ev=>{
+  ev.preventDefault();
+  const fd=new FormData();fd.append("total_budget",budget.value);fd.append("occasion",occ.value);fd.append("preferences",pref.value);
+  if(img.files[0])fd.append("image",img.files[0]);
+  PS.submit({url:"/jewelry-budget",btn:b,spinner:sp,out:document.getElementById("out"),type:"jewelry",body:fd,isForm:true});
+});
+</script></body></html>

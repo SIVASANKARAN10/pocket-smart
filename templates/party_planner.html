@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="en"><head><title>Party Budget Planner - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body class="page-party">
+{% set active='party' %}{% include "partials/app_nav.html" %}
+<div class="page-head"><h1>Party Budget Planner</h1><p>Plan your perfect event with AI-powered budget recommendations</p></div>
+<div class="form-wrap"><form class="form-card" id="f">
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-indian-rupee-sign"></i></span> Basic Information</h3><div class="line"></div>
+    <div class="two"><div><label class="lb" for="budget">Total Budget (₹)</label><input id="budget" type="number" min="1" step="any" value="5000" required></div>
+    <div><label class="lb" for="guests">Number of Guests</label><input id="guests" type="number" min="1" max="5000" value="10" required></div></div></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-cake-candles"></i></span> Event Details</h3><div class="line"></div>
+    <div class="two"><div><label class="lb" for="ptype">Party Type</label><select id="ptype"><option>Birthday</option><option>Wedding</option><option>Corporate</option><option>Anniversary</option><option>Baby Shower</option><option>Housewarming</option><option>Other</option></select></div>
+    <div><label class="lb" for="venue">Venue Type</label><select id="venue"><option>Home</option><option>Banquet Hall</option><option>Restaurant</option><option>Outdoor / Garden</option><option>Hotel</option><option>Office</option></select></div></div></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-list-check"></i></span> Party Needs</h3><div class="line"></div>
+    <div class="need-grid">
+      <label class="need on"><input type="checkbox" id="cat" checked><span class="ni"><i class="fa-solid fa-utensils"></i></span> Catering</label>
+      <label class="need on"><input type="checkbox" id="dec" checked><span class="ni"><i class="fa-solid fa-palette"></i></span> Decoration</label>
+      <label class="need"><input type="checkbox" id="ent"><span class="ni"><i class="fa-solid fa-music"></i></span> Entertainment</label></div></div>
+  <div class="fs"><h3><span class="dot"><i class="fa-solid fa-comment"></i></span> Additional Requirements</h3><div class="line"></div>
+    <textarea id="extra" rows="3" placeholder="Special requests, themes, dietary restrictions, etc."></textarea></div>
+  <button class="btn btn-block" id="b" type="submit"><i class="fa-solid fa-calculator"></i> Generate Budget Plan</button>
+</form></div>
+<div class="spinner" id="sp"><i class="fa-solid fa-spinner fa-spin"></i> Building your plan...</div>
+<div class="result" id="out"></div>
+<div class="footer-slim footer">&copy; 2025 PocketSmart. All rights reserved.</div>
+<script>
+document.querySelectorAll(".need input").forEach(i=>i.addEventListener("change",()=>i.parentElement.classList.toggle("on",i.checked)));
+document.getElementById("f").addEventListener("submit",ev=>{
+  ev.preventDefault();
+  PS.submit({url:"/party-budget",btn:b,spinner:sp,out:document.getElementById("out"),type:"party",body:{
+    total_budget:parseFloat(budget.value),num_guests:+guests.value,party_type:ptype.value,venue_type:venue.value,
+    needs_catering:cat.checked,needs_decoration:dec.checked,needs_entertainment:ent.checked,additional_requirements:extra.value.trim()||null}});
+});
+</script></body></html>

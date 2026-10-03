@@ -1,0 +1,13 @@
+<nav class="navbar">
+  <div class="container">
+    <a class="brand" href="/dashboard"><i class="fa-solid fa-wallet"></i> PocketSmart</a>
+    <div class="nav-links">
+      <a href="/dashboard" class="{{ 'active' if active=='dashboard' }}"><i class="fa-solid fa-chart-line"></i><span class="lbl">Dashboard</span></a>
+      <a href="/home-planner" class="{{ 'active' if active=='home' }}"><i class="fa-solid fa-house"></i><span class="lbl">Home Planner</span></a>
+      <a href="/party-planner" class="{{ 'active' if active=='party' }}"><i class="fa-solid fa-champagne-glasses"></i><span class="lbl">Party Planner</span></a>
+      <a href="/jewelry-planner" class="{{ 'active' if active=='jewelry' }}"><i class="fa-solid fa-gem"></i><span class="lbl">Jewelry Planner</span></a>
+      <a href="/history" class="{{ 'active' if active=='history' }}"><i class="fa-solid fa-clock-rotate-left"></i><span class="lbl">History</span></a>
+      <button type="button" onclick="PS.logout()"><i class="fa-solid fa-right-from-bracket"></i><span class="lbl">Logout</span></button>
+    </div>
+  </div>
+</nav>

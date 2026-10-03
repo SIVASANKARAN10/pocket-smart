@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head><title>Dashboard - PocketSmart</title>{% include "partials/head.html" %}</head>
+<body class="page-dashboard">
+{% set active='dashboard' %}{% include "partials/app_nav.html" %}
+<header class="dashboard-hero">
+  <div class="dashboard-hero-inner">
+    <div class="dashboard-intro">
+      <div class="dashboard-eyebrow"><span></span> YOUR PLANNING SPACE</div>
+      <h1>Welcome back, {{ user.username }}<span>.</span></h1>
+      <p>Make thoughtful plans for the things that matter. Choose a planner to get started.</p>
+    </div>
+    <div class="dashboard-stamp" aria-hidden="true">
+      <span class="stamp-icon"><i class="fa-solid fa-wallet"></i></span>
+      <span class="stamp-caption">Plan with<br>confidence</span>
+    </div>
+  </div>
+</header>
+<main class="dash-wrap"><div class="container">
+  <div class="planner-grid">
+    <article class="planner-card home"><div class="body">
+      <div class="planner-card-meta"><span class="planner-icon"><i class="fa-solid fa-couch"></i></span><span>01 <i class="fa-solid fa-circle"></i> HOME</span></div>
+      <div class="planner-label">SPACE &amp; FURNISHINGS</div><h3>Home Budget Planner</h3>
+      <p>Plan your interior design budget with recommendations for furniture, lighting, and more.</p>
+      <a class="btn btn-primary" href="/home-planner">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+    </div></article>
+    <article class="planner-card party"><div class="body">
+      <div class="planner-card-meta"><span class="planner-icon"><i class="fa-solid fa-champagne-glasses"></i></span><span>02 <i class="fa-solid fa-circle"></i> EVENTS</span></div>
+      <div class="planner-label">GATHERINGS &amp; CELEBRATIONS</div><h3>Party Budget Planner</h3>
+      <p>Shape a memorable event with a considered budget for venue, catering, and entertainment.</p>
+      <a class="btn btn-primary" href="/party-planner">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+    </div></article>
+    <article class="planner-card jewelry"><div class="body">
+      <div class="planner-card-meta"><span class="planner-icon"><i class="fa-solid fa-gem"></i></span><span>03 <i class="fa-solid fa-circle"></i> STYLE</span></div>
+      <div class="planner-label">PERSONAL STYLE</div><h3>Jewelry Budget Planner</h3>
+      <p>Find pieces for any occasion that complement your outfit and stay within budget.</p>
+      <a class="btn btn-primary" href="/jewelry-planner">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+    </div></article>
+  </div>
+  <div class="hist-btn-wrap"><a class="btn btn-orange" href="/history"><i class="fa-solid fa-clock-rotate-left"></i> View All Recommendation History</a></div>
+  <div class="activity"><div class="hd"><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</div><div id="act"><div class="empty">Loading...</div></div></div>
+</div></main>
+<div class="footer-slim footer">&copy; 2025 PocketSmart. All rights reserved.</div>
+<script>
+(async()=>{
+  const el=document.getElementById("act");
+  try{
+    const r=await fetch("/recommendation-history",{credentials:"same-origin"}); const d=await r.json();
+    const items=(d.history||[]).slice(0,3);
+    if(!items.length){el.innerHTML='<div class="empty">No plans yet. Pick a planner above to create your first one.</div>';return}
+    const ic={home:"fa-house",party:"fa-champagne-glasses",jewelry:"fa-gem"};
+    el.innerHTML=items.map(i=>{
+      const dt=new Date(i.timestamp).toLocaleDateString("en-IN",{month:"short",day:"numeric",year:"numeric"});
+      let t,sub=`Budget: ${PS.inr(i.summary.total_budget)}`;
+      if(i.type==="home")t="Home Budget Plan";
+      else if(i.type==="party"){t=`${PS.pretty(i.input.party_type)} Party Budget Plan`;sub+=` for ${i.input.num_guests} guests`}
+      else{t="Jewelry Budget Plan";sub+=` for ${PS.esc(i.input.occasion)}`}
+      return `<div class="row"><div class="ci"><i class="fa-solid ${ic[i.type]}"></i></div><div><b>${t}</b><small>${sub} - Created on ${dt}</small></div></div>`}).join("");
+  }catch(e){el.innerHTML='<div class="empty">Could not load recent activity.</div>'}
+})();
+</script></body></html>
